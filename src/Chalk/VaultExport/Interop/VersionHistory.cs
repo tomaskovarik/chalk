@@ -41,6 +41,7 @@ namespace Chalk.VaultExport.Interop
             {
                 CommandLineClientArgument.RepositoryName(repositoryName),
             };
+
             if (beginAtVersion != null)
             {
                 args.Add(BeginAtVersionArgument(beginAtVersion.Value));
@@ -50,6 +51,7 @@ namespace Chalk.VaultExport.Interop
             {
                 args.Add(BeginAtLatestVersionArgument());
             }
+
             return args.ToArray();
         }
 

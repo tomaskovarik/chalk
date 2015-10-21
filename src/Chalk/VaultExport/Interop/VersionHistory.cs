@@ -37,13 +37,25 @@ namespace Chalk.VaultExport.Interop
 
         static IArgument[] CreateArguments(string repositoryName, int? beginAtVersion)
         {
-            return new IArgument[]
+            var args = new List<IArgument>(3)
             {
                 CommandLineClientArgument.RepositoryName(repositoryName),
-                beginAtVersion != null
-                    ? BeginAtVersionArgument(beginAtVersion.Value)
-                    : BeginAtLatestVersionArgument()
             };
+            if (beginAtVersion != null)
+            {
+                args.Add(BeginAtVersionArgument(beginAtVersion.Value));
+                args.Add(UnlimitedRowsArgument());                
+            }
+            else
+            {
+                args.Add(BeginAtLatestVersionArgument());
+            }
+            return args.ToArray();
+        }
+
+        static NamedArgument UnlimitedRowsArgument()
+        {
+            return CommandLineClientArgument.RowLimit(0);
         }
 
         static NamedArgument BeginAtLatestVersionArgument()

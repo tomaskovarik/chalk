@@ -57,7 +57,7 @@ namespace Chalk.VaultExport.Interop
 
         static NamedArgument UnlimitedRowsArgument()
         {
-            return CommandLineClientArgument.RowLimit(0);
+            return CommandLineClientArgument.RowLimit(100000);
         }
 
         static NamedArgument BeginAtLatestVersionArgument()

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
 
@@ -7,7 +6,10 @@ namespace Chalk.VaultExport
 {
     public class DirectoryCleaner
     {
-        const string HiddenNamePrefix = ".";
+        /// <summary>
+        /// Files and directories not iriginating from Vault, that should be left when purging workspace. They are only in root.
+        /// </summary>
+        static readonly List<string> UndeletableRootNames = new List<string> { ".git", ".gitignore", ".chalk-lastversion" };
 
         readonly IFileSystem fileSystem;
 
@@ -17,42 +19,16 @@ namespace Chalk.VaultExport
         }
 
         public void DeleteContents(string path)
-        { 
+        {
             DirectoryInfoBase directory = fileSystem.DirectoryInfo.FromDirectoryName(path);
 
-            foreach (FileInfoBase file in GetDeletableFiles(directory))
+            foreach (FileInfoBase file in directory.GetFiles().Where(file => !UndeletableRootNames.Contains(file.Name)))
                 file.Delete();
 
-            foreach (DirectoryInfoBase childDirectory in GetDeletableDirectories(directory))
-            { 
-                DeleteContents(childDirectory.FullName); 
-                childDirectory.Delete();
+            foreach (DirectoryInfoBase childDirectory in directory.GetDirectories().Where(childDirectory => !UndeletableRootNames.Contains(childDirectory.Name)))
+            {
+                childDirectory.Delete(true);
             }
-        }
-
-        static IEnumerable<FileInfoBase> GetDeletableFiles(DirectoryInfoBase parentDirectory)
-        {
-            return parentDirectory.GetFiles().Where(IsDeletable);
-        }
-
-        static IEnumerable<DirectoryInfoBase> GetDeletableDirectories(DirectoryInfoBase parentDirectory)
-        {
-            return parentDirectory.GetDirectories().Where(IsDeletable);
-        }
-
-        static bool IsDeletable(FileSystemInfoBase fileSystemObject)
-        {
-            return !IsHiddenByAttributes(fileSystemObject.Attributes) && !IsHiddenByName(fileSystemObject.Name);
-        }
-
-        static bool IsHiddenByAttributes(FileAttributes attributes)
-        {
-            return attributes.HasFlag(FileAttributes.Hidden);
-        }
-
-        static bool IsHiddenByName(string name)
-        {
-            return name.StartsWith(HiddenNamePrefix);
         }
     }
 }

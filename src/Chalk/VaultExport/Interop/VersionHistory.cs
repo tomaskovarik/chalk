@@ -45,11 +45,10 @@ namespace Chalk.VaultExport.Interop
             if (beginAtVersion != null)
             {
                 args.Add(BeginAtVersionArgument(beginAtVersion.Value));
-                args.Add(UnlimitedRowsArgument());                
             }
             else
             {
-                args.Add(BeginAtLatestVersionArgument());
+                args.Add(UnlimitedRowsArgument());
             }
 
             return args.ToArray();

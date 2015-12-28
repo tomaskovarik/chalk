@@ -22,7 +22,7 @@ namespace Chalk.GitImport
         const string CommitAuthorFormat = "{0} <{0}@{1}>";
         const string Iso8601DateTimeFormat = "s";
 
-        const string VaultExportSourceNoteFormat = "(Exported from {0} at version {1})";
+        const string VaultExportSourceNoteFormat = "(Exported from Vault repository {0} and path {1} at version {2})";
 
         readonly ActionContext context;
         readonly CommandLineClient gitClient;
@@ -73,7 +73,7 @@ namespace Chalk.GitImport
 
         string FormatExportSourceNote(VersionHistoryItem historyItem)
         {
-            return string.Format(VaultExportSourceNoteFormat, context.Parameters.VaultRepositoryPath,
+            return string.Format(VaultExportSourceNoteFormat, context.Parameters.VaultRepositoryName, context.Parameters.VaultRepositoryPath,
                 historyItem.Version);
         }
 
